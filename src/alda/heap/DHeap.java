@@ -1,7 +1,11 @@
 // Klassen i denna fil måste döpas om till DHeap för att testerna ska fungera. 
 package alda.heap;
 
-//BinaryHeap class
+/*
+ * ALDA04 - Hashtabeller
+ * Daniel Andersson - daan3440  
+ */
+//DHeap class
 //
 //CONSTRUCTION: with optional capacity (that defaults to 100)
 //            or an array containing initial items
