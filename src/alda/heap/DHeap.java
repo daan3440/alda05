@@ -26,7 +26,6 @@ public class DHeap<AnyType extends Comparable<? super AnyType>>
 	private static final int DEFAULT_DIMENSIONS = 2;
 
 	private int currentSize;      // Number of elements in heap
-	private int capacity;      // Number of elements in heap
 	private int d;      // n
 	private AnyType [ ] array; // The heap array
 	/**
@@ -35,17 +34,12 @@ public class DHeap<AnyType extends Comparable<? super AnyType>>
 	public DHeap( )
 	{
 		this( DEFAULT_DIMENSIONS );
-
-//		d = DEFAULT_DIMENSIONS;
-//		array = (AnyType[]) new Comparable[ DEFAULT_CAPACITY + 1 ];
 	}
 
 	/**
 	 * Construct the binary heap.
 	 * @param d the capacity of the binary heap.
 	 */
-
-	//TODO
 	public DHeap(int d){
 		if(d <= 1) {
 			throw new IllegalArgumentException();
@@ -53,23 +47,6 @@ public class DHeap<AnyType extends Comparable<? super AnyType>>
 		this.d = d;
 		array = (AnyType[]) new Comparable[ DEFAULT_CAPACITY  + 1 ];
 	}
-
-	//	 /**
-	//	  * Construct the binary heap given an array of items.
-	//	  */
-	//	 public DHeap( AnyType [ ] items )
-	//	 {
-	//	         currentSize = items.length;
-	//	         array = (AnyType[]) new Comparable[ ( currentSize + 2 ) * 11 / 10 ];
-	//	
-	//	         int i = 1;
-	//	         for( AnyType item : items )
-	//	             array[ i++ ] = item;
-	//	         buildHeap( );
-	//	 }
-
-
-
 
 	/**
 	 * Insert into the priority queue, maintaining heap order.
@@ -121,7 +98,7 @@ public class DHeap<AnyType extends Comparable<? super AnyType>>
 			throw new UnderflowException( );
 
 		AnyType minItem = findMin( );
-		array[ 1 ] = array[ currentSize-- ];
+		array[ 1 ] = array[ currentSize--];
 		percolateDown( 1 );
 
 		return minItem;
@@ -162,38 +139,35 @@ public class DHeap<AnyType extends Comparable<? super AnyType>>
 	 */
 	private void percolateDown( int hole )
 	{
-		int child;
 		AnyType tmp = array[ hole ];
-
-		for( ; firstChildIndex(hole) <= currentSize; hole = child )
-		{
-			int count = 0; 
-			child = firstChildIndex(hole);
-			if( child != currentSize &&
-					array[ child + 1 ].compareTo( array[ child ] ) < 0 )
-				child++;
-			if( array[ child ].compareTo( tmp ) < 0 )
-				array[ hole ] = array[ child ];
-			else
-				break;
-			count++;
-		}
+		for(; minChild(hole) <= currentSize && tmp.compareTo(getMinChild(hole)) >= 0;  hole = minChild(hole))
+			array[hole] = getMinChild(hole);
 		array[ hole ] = tmp;
 	}
 
-	// Test program
-	//	public static void main( String [ ] args )
-	//	{
-	//		int numItems = 10000;
-	//		DHeap<Integer> h = new DHeap<>( );
-	//		int i = 37;
-	//
-	//		for( i = 37; i != 0; i = ( i + 37 ) % numItems )
-	//			h.insert( i );
-	//		for( i = 1; i < numItems; i++ )
-	//			if( h.deleteMin( ) != i )
-	//				System.out.println( "Oops! " + i );
-	//	}
+	private AnyType getMinChild(int parent){
+		return get(minChild(parent));
+	}
+
+	private int minChild(int parent){
+		int firstChildIndex = firstChildIndex(parent);
+		if(firstChildIndex > currentSize)
+			return currentSize+d;
+		
+		AnyType min = array[firstChildIndex];
+		int minChildIndex = firstChildIndex;
+
+		for(int i = 1; i<d;i++){
+			if(firstChildIndex+i <= currentSize){
+				AnyType compare = array[firstChildIndex+i];
+				if(compare !=null  && min.compareTo(compare) > 0){
+					minChildIndex = firstChildIndex+i;
+					min = compare;
+				}
+			}
+		}
+		return minChildIndex;
+	}
 
 	public int parentIndex(int i) {
 		if (i <= 1)
@@ -204,7 +178,7 @@ public class DHeap<AnyType extends Comparable<? super AnyType>>
 	public int firstChildIndex(int i) {
 		if (i <1)
 			throw new IllegalArgumentException();
-//		System.out.println(i*d-(d-2));
+		//		System.out.println(i*d-(d-2));
 		return i*d-d+2;
 	}
 
