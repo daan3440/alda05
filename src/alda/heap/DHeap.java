@@ -23,33 +23,35 @@ package alda.heap;
 public class DHeap<AnyType extends Comparable<? super AnyType>>
 {
 	private static final int DEFAULT_CAPACITY = 10;
+	private static final int DEFAULT_DIMENSIONS = 2;
 
 	private int currentSize;      // Number of elements in heap
-	private int d;      // Number of elements in heap
+	private int capacity;      // Number of elements in heap
+	private int d;      // n
 	private AnyType [ ] array; // The heap array
 	/**
 	 * Construct the binary heap.
 	 */
 	public DHeap( )
 	{
-		this( DEFAULT_CAPACITY );
+		this( DEFAULT_DIMENSIONS );
 
-		d=2;
-		array = (AnyType[]) new Comparable[ DEFAULT_CAPACITY + 1 ];
+//		d = DEFAULT_DIMENSIONS;
+//		array = (AnyType[]) new Comparable[ DEFAULT_CAPACITY + 1 ];
 	}
 
 	/**
 	 * Construct the binary heap.
-	 * @param capacity the capacity of the binary heap.
+	 * @param d the capacity of the binary heap.
 	 */
 
 	//TODO
 	public DHeap(int d){
 		if(d <= 1) {
-			throw new IllegalArgumentException("Oh no1");
+			throw new IllegalArgumentException();
 		}
 		this.d = d;
-		array = (AnyType[]) new Comparable[ d + 1 ];
+		array = (AnyType[]) new Comparable[ DEFAULT_CAPACITY  + 1 ];
 	}
 
 	//	 /**
@@ -76,17 +78,18 @@ public class DHeap<AnyType extends Comparable<? super AnyType>>
 	 */
 	public void insert( AnyType x )
 	{
-		if( currentSize == array.length - 1 )
-			enlargeArray( array.length * 2 + 1 );
-
+		if( currentSize == array.length - 1 ) {
+			enlargeArray( array.length * d + 1 );
+		}
 		// Percolate up
 		int hole = ++currentSize;
-		//		if (d==2) {
-		for( array[ 0 ] = x; x.compareTo( array[ hole / 2 ] ) < 0; hole /= 2 )
-			array[ hole ] = array[ hole / 2 ];
+		for( array[ 0 ] = x; hole != 1 && x.compareTo( array[ parentIndex(hole)] ) < 0; hole = (parentIndex(hole))) {
+			array[ hole ] = array[ parentIndex(hole) ];
+		}
 		array[ hole ] = x;
-		//		}
 	}
+
+
 
 
 	private void enlargeArray( int newSize )
@@ -162,9 +165,10 @@ public class DHeap<AnyType extends Comparable<? super AnyType>>
 		int child;
 		AnyType tmp = array[ hole ];
 
-		for( ; hole * 2 <= currentSize; hole = child )
+		for( ; firstChildIndex(hole) <= currentSize; hole = child )
 		{
-			child = hole * 2;
+			int count = 0; 
+			child = firstChildIndex(hole);
 			if( child != currentSize &&
 					array[ child + 1 ].compareTo( array[ child ] ) < 0 )
 				child++;
@@ -172,6 +176,7 @@ public class DHeap<AnyType extends Comparable<? super AnyType>>
 				array[ hole ] = array[ child ];
 			else
 				break;
+			count++;
 		}
 		array[ hole ] = tmp;
 	}
@@ -190,53 +195,25 @@ public class DHeap<AnyType extends Comparable<? super AnyType>>
 	//				System.out.println( "Oops! " + i );
 	//	}
 
-	public Object parentIndex(int i) {
-		//		c*d-(d-2)
-//		System.out.println("i " + i);	
-		//		System.out.println(array[0]);	
-		//		System.out.println(array[2]);	
-		//		System.out.println(array[3]);	
-		//		System.out.println(array[4]);	
-		//		System.out.println(array[5]);	
-		//		System.out.println(array[6]);	
-		//		System.out.println(array[7]);	
-		//		System.out.println(array[8]);	
-		//		return i*d-(d-2);
-		if (array == null)
-			System.out.println("NULL");
-		AnyType tmp = null;
-		int count = 1;
-		while(tmp == null) {
-			tmp = array[count];
-			count++;
-		}
-		return tmp;
+	public int parentIndex(int i) {
+		if (i <= 1)
+			throw new IllegalArgumentException();
+		return (i-2+d)/d;
 	}
 
-	public Object firstChildIndex(int i) {
-		if(d == 2) {
-			System.out.println("binary");	
-		}
-		if(d == 3) {
-			System.out.println("threesome");	
-		}
-		if(d == 4) {
-			System.out.println("foursome");	
-			System.out.println("d " + d);	
-			System.out.println("i " + i);	
-		}
-		System.out.println(i*d-(d-2));
-		return i*d;
+	public int firstChildIndex(int i) {
+		if (i <1)
+			throw new IllegalArgumentException();
+//		System.out.println(i*d-(d-2));
+		return i*d-d+2;
 	}
 
 	public int size() {
-
 		return currentSize;
 	}
 
 
 	public AnyType get(int index) {
-		// TODO Auto-generated method stub
 		return array[index];
 	}
 }
