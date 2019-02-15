@@ -140,7 +140,7 @@ public class DHeap<AnyType extends Comparable<? super AnyType>>
 	private void percolateDown( int hole )
 	{
 		AnyType tmp = array[ hole ];
-		for(; minChild(hole) <= currentSize && tmp.compareTo(getMinChild(hole)) >= 0;  hole = minChild(hole))
+		for(; minChild(hole) <= currentSize && getMinChild(hole).compareTo(tmp) < 0;  hole = minChild(hole))
 			array[hole] = getMinChild(hole);
 		array[ hole ] = tmp;
 	}
